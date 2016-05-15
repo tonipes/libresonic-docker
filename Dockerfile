@@ -1,37 +1,17 @@
-FROM debian:jessie
+#
+# Docker file for libresonic
+# 
+# https://github.com/tonipes/libresonic-docker
+#
+# https://github.com/Libresonic/libresonic
+#
 
-MAINTAINER tonipes "pesola.toni@gmail.com"
+FROM tomcat:6.0
 
-ENV DEBIAN_FRONTEND noninteractive
+MAINTAINER Toni Pesola
 
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    apt-get update && \
-    apt-get install --yes --force-yes --no-install-recommends --no-install-suggests locales && \
-    apt-get install --yes --force-yes --no-install-recommends --no-install-suggests openjdk-7-jdk && \
-    apt-get install --yes --force-yes --no-install-recommends --no-install-suggests maven && \
-    apt-get install --yes --force-yes --no-install-recommends --no-install-suggests git && \
-    apt-get install --yes --force-yes --no-install-recommends --no-install-suggests fakeroot && \
-    apt-get install --yes --force-yes --no-install-recommends --no-install-suggests lintian && \
-    apt-get clean && \
-    /usr/sbin/locale-gen
+RUN wget https://libresonic.org/release/libresonic-stable.war
 
-RUN git clone git://github.com/Libresonic/libresonic.git && \
-    cd libresonic && \ 
-    mvn package
+RUN rm -rf /usr/local/tomcat/webapps && mkdir /usr/local/tomcat/webapps
 
-RUN cd libresonic && mvn -P full -pl subsonic-booter -am install
-
-RUN cd libresonic && mvn -P full -pl subsonic-installer-debian -am install
-    
-RUN cd libresonic && dpkg -i ./subsonic-installer-debian/target/subsonic-*.deb
-
-RUN useradd --home /var/subsonic -M subsonic -K UID_MIN=10000 -K GID_MIN=10000 && \
-    mkdir -p /var/subsonic && chown subsonic /var/subsonic && chmod 0770 /var/subsonic
-
-COPY start.sh /start.sh
-
-RUN chmod +x /start.sh
-
-USER subsonic
-
-CMD ["./start.sh"]
+RUN cp libresonic-stable.war /usr/local/tomcat/webapps/ROOT.war
