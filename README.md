@@ -1,3 +1,7 @@
+## DEPRECATED
+
+This repo is deprecated as I moved to [airsonic](https://airsonic.github.io/). It has an official [official docker image](https://hub.docker.com/r/airsonic/airsonic/).
+
 ## Libresonic Dockerfile
 
 This repository contains **Dockerfile** for [Libresonic](http://libresonic.org).
